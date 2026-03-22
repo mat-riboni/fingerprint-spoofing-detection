@@ -17,6 +17,19 @@ def load(file_path):
     D = numpy.array(D)
     return D.T, L
 
+def split_db_2to1(D, L, seed=0):
+    nTrain = int(D.shape[1]*2.0/3.0)
+    np.random.seed(seed)
+    idx = np.random.permutation(D.shape[1])
+    idxTrain = idx[0:nTrain]
+    idxTest = idx[nTrain:]
+    DTR = D[:, idxTrain]
+    DVAL = D[:, idxTest]
+    LTR = L[idxTrain]
+    LVAL = L[idxTest]
+    return (DTR, LTR), (DVAL, LVAL)
+
+
 def plot_features(D, L):
     feature_names = [f'Feature {i+1}' for i in range(6)]
     class_names = {0: 'Fake', 1: 'Genuine'}
@@ -49,3 +62,29 @@ def plot_features(D, L):
                 ax.legend(loc='upper right', fontsize='small')
 
     plt.show()
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+def plot_histograms(D, L, title_prefix="PCA Direction"):
+    num_dims = D.shape[0]
+    labels = np.unique(L)
+    
+    cols = 3
+    rows = (num_dims + cols - 1) // cols
+    
+    plt.rcParams["figure.figsize"] = (15, 5 * rows)
+    
+    for i in range(num_dims):
+        plt.subplot(rows, cols, i + 1)
+        
+        for label in labels:
+            plt.hist(D[i, L == label], bins=25, alpha=0.5, label=f"Class {label}", density=True)
+        
+        plt.title(f"{title_prefix} {i + 1}")
+        plt.xlabel("Value")
+        plt.ylabel("Density")
+        plt.legend()
+    
+    plt.tight_layout()
+    plt.show() 
