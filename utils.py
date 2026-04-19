@@ -88,3 +88,32 @@ def plot_histograms(D, L, title_prefix="PCA Direction"):
     
     plt.tight_layout()
     plt.show() 
+
+def vrow(v):
+    return v.reshape(1, v.size)
+
+def vcol(v):
+    return v.reshape(v.size, 1)
+
+
+def print_corr(Corr, title="Correlation Matrix"):
+    fig, ax = plt.subplots(figsize=(6, 5))
+    cax = ax.imshow(Corr, cmap='coolwarm', vmin=-1, vmax=1)
+
+    fig.colorbar(cax)
+
+    for i in range(Corr.shape[0]):
+        for j in range(Corr.shape[1]):
+            text_color = "white" if abs(Corr[i, j]) > 0.6 else "black"
+            ax.text(j, i, f"{Corr[i, j]:.2f}", 
+                    ha="center", va="center", color=text_color, fontsize=10)
+
+    ticks = np.arange(Corr.shape[0])
+    ax.set_xticks(ticks)
+    ax.set_yticks(ticks)
+    ax.set_xticklabels([f"Feat {i+1}" for i in ticks])
+    ax.set_yticklabels([f"Feat {i+1}" for i in ticks])
+
+    plt.title(title)
+    plt.tight_layout()
+    plt.show()
