@@ -39,23 +39,29 @@ def logreg_obj_weighted(v, DTR, LTR, l, pi_target):
     J_grad = np.append(J_dw, J_db)
     return (J, J_grad)
 
-def train_log_model(DTR, LTR, logreg_obj, l):
+def train_log_model(DTR, LTR, l):
     x0 = np.zeros(DTR.shape[0] + 1)
     pi_emp = (LTR == 1).mean()
     x, f, d = scipy.optimize.fmin_l_bfgs_b(func=logreg_obj, x0=x0, args=(DTR, LTR, l))
     return x, pi_emp
 
 
+def train_log_model_weighted(DTR, LTR, l, pi_target):
+    x0 = np.zeros(DTR.shape[0] + 1)
+    pi_emp = (LTR == 1).mean()
+    x, f, d = scipy.optimize.fmin_l_bfgs_b(func=logreg_obj_weighted, x0=x0, args=(DTR, LTR, l, pi_target))
+    return x, pi_emp
+
+
+
+
 def evaluate_log_model(x, DVAL, LVAL, training_prior, application_prior):
     S = (vcol(x[0:-1]).T @ DVAL + x[-1]).ravel() #scores vector
     preds = (S>0).astype(int)
     accuracy = (preds == LVAL).mean()
-    print(f"Error rate: {1 - accuracy}")
     llr = S - np.log((training_prior/(1-training_prior)))
     minDCF = compute_min_dcf(llr=llr, L=LVAL, pi=application_prior, C_fn=1, C_fp=1)
     actDCF = compute_act_dcf(llr=llr, L=LVAL, pi=application_prior, C_fn=1, C_fp=1)
-    print(f"Min DCF: {minDCF}")
-    print(f"Act DCF: {actDCF}")
-    print('-------')
+    return accuracy, minDCF, actDCF
         
 
