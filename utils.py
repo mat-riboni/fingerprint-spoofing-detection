@@ -117,3 +117,12 @@ def print_corr(Corr, title="Correlation Matrix"):
     plt.title(title)
     plt.tight_layout()
     plt.show()
+
+
+def binary_confusion_matrix(predictions, actual):
+    num_classes = len(np.unique(actual))
+    cf = np.zeros((num_classes , num_classes), dtype=int)
+    for i in range(num_classes):
+        for j in range(num_classes):
+            cf[i][j] = np.sum((actual==j) & (predictions==i))
+    return cf

@@ -1,5 +1,5 @@
 import numpy as np
-from utils import vrow, vcol
+from utils import *
 import matplotlib.pyplot as plt
 
 
@@ -42,13 +42,6 @@ def compute_theta_parameters_per_class(D, L):
         theta.append((mu, cov_mat))
     return theta
 
-def binary_confusion_matrix(predictions, actual):
-    num_classes = len(np.unique(actual))
-    cf = np.zeros((num_classes , num_classes), dtype=int)
-    for i in range(num_classes):
-        for j in range(num_classes):
-            cf[i][j] = np.sum((actual==j) & (predictions==i))
-    return cf
 
 
 def print_binary_confusion_matrix(predictions, actual):
@@ -108,7 +101,7 @@ def compute_act_dcf(llr, L, pi, C_fn, C_fp):
     return B / B_dummy
 
 def plot_bayes_error(llr, L, label="Model", color_act='r', color_min='b'):
-    effPriorLogOdds = np.linspace(-3, 3, 21)
+    effPriorLogOdds = np.linspace(-4, 4, 21)
     effPrioOdds = 1 / (1 + np.exp(-effPriorLogOdds))
     
     act_dcf = [compute_act_dcf(llr, L, p, 1, 1) for p in effPrioOdds]
@@ -120,7 +113,7 @@ def plot_bayes_error(llr, L, label="Model", color_act='r', color_min='b'):
     
     # Formatting
     plt.ylim([0, 1.1])
-    plt.xlim([-3, 3])
+    plt.xlim([-4, 4])
     plt.xlabel(r'prior log-odds $\log \frac{\tilde{\pi}}{1-\tilde{\pi}}$')
     plt.ylabel('DCF')
     plt.title('Bayes Error Plot')
